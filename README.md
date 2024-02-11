@@ -1,4 +1,5 @@
 # ShaderServant
+A lightweight, high performance alternative to NPRShader. This point is to provide a simple and non-intrusive external shader loader while also supporting the old NPR standard.
 
 # Usage
 1. Just throw the two files into `bepinex/plugins`
