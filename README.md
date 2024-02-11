@@ -30,12 +30,12 @@ Obviously this means a modder can define the entire material in the package and 
 
 ## Toggling Keywords
 Add a new float property to your material file. The name of this property will be the Keyword with the SS toggle keyword added. For example:
-`_UseReflections_SSKEYWORD`
-`_InterpolateMatcaps_SSKEYWORD`
-`_PreferLeeches_SSKEYWORD`
+- `_UseReflections_SSKEYWORD`
+- `_InterpolateMatcaps_SSKEYWORD`
+- `_PreferLeeches_SSKEYWORD`
 Your float value itself should be 0 or 1:
-1 keyword enabled. 
-0 keyword disabled.
+- 1 keyword enabled. 
+- 0 keyword disabled.
 
 **May cause issues if you leave the `_NPRMAT_` keyword**
 
