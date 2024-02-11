@@ -13,7 +13,18 @@ This plugin seeks to be a simple and flexible external shader loader. So apart f
 However, in doing this, we saw there was a need for a more efficient and flexible way of toggling keywords and setting cubemaps. This is our advanced mates format that only works with ShaderServant.
 
 ## Remove `_NPRMAT_` from file name!
-NPR material files are denoted by using `_NPRMAT_SomeShaderName` in order to load shaders. However, when SS(ShaderServant) detects `_NPRMAT_` it will internally convert it to an advanced material but certain changes will be lost. Your advanced materials should be named just your typical materials. Whatever you want, just no `_NPRMAT_`
+NPR material files are denoted by using `_NPRMAT_SomeShaderName` in order to load shaders. However, when SS(ShaderServant) detects `_NPRMAT_` it will internally convert it to an advanced material but if you mix the keyword with advanced material functions, it will produce errors. Your advanced materials should be named just like your typical materials. Whatever you want, just no `_NPRMAT_`
+
+## Define the shaders properly within the shader fields in the material
+NPR used these fields as a fallback and relied on the file naming convention to fetch the shader it wanted. But this creates undo complexity for little return. We instead use old reliable and fetch the shaders the old fashioned way.
+
+Shader Name: `com3d2mod/Standard_NPRToon_`
+Material Template Name: `com3d2mod_NPRToon_`
+
+### Material Template?
+When modders add shaders into a shader package, they should include a "default" material that uses said shader. This material contains the values that will be used initially when the material is created. Afterwards, any changes defined in the mate files are set.
+
+Obviously this means a modder can define the entire material in the package and use a barebones mate, or do the opposite and use a default material and a very long and complex mate. We suggest the former.
 
 ## Toggling Keywords
 Add a new float property to your material file. The name of this property will be the Keyword with the SS toggle keyword added. For example:
