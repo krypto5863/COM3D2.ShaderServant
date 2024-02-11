@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34511.84
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShaderServant", "NPLShading\ShaderServant.csproj", "{60AC733A-3ABD-48D7-B719-EED0979F2709}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{60AC733A-3ABD-48D7-B719-EED0979F2709}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60AC733A-3ABD-48D7-B719-EED0979F2709}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60AC733A-3ABD-48D7-B719-EED0979F2709}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60AC733A-3ABD-48D7-B719-EED0979F2709}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C2FD85A6-AD50-4238-8EEB-18059471F1BC}
+	EndGlobalSection
+EndGlobal
