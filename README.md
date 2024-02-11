@@ -15,7 +15,7 @@ However, in doing this, we saw there was a need for a more efficient and flexibl
 ## Remove `_NPRMAT_` from file name!
 NPR material files are denoted by using `_NPRMAT_SomeShaderName` in order to load shaders. However, when SS(ShaderServant) detects `_NPRMAT_` it will internally convert it to an advanced material but if you mix the keyword with advanced material functions, it will produce errors. Your advanced materials should be named just like your typical materials. Whatever you want, just no `_NPRMAT_`
 
-## Define the shaders properly within the shader fields in the material
+## Set Shaders
 NPR used these fields as a fallback and relied on the file naming convention to fetch the shader it wanted. But this creates undo complexity for little return. We instead use old reliable and fetch the shaders the old fashioned way.
 
 Shader Name: `com3d2mod/Standard_NPRToon_`
