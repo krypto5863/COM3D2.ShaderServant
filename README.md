@@ -38,6 +38,9 @@ Material Template Name: `com3d2mod_NPRToon_`
 ![image](https://github.com/krypto5863/COM3D2.ShaderServant/assets/29824718/7cf17cd6-8c69-4d1e-a305-f86968bd7047)
 ![image](https://github.com/krypto5863/COM3D2.ShaderServant/assets/29824718/d78654f7-6363-4a64-b354-199d1e7e8df7)
 
+### Where can I find shader name and material names?
+On startup, NPR will log all shader names and their materials to the output log and to the console. You can check inside of `bepinex/LogOutput.log` for something as follows:
+![image](https://github.com/krypto5863/COM3D2.ShaderServant/assets/29824718/64acd59d-113d-4f92-87ee-36c579fd99af)
 
 ### Material Template?
 When modders add shaders into a shader package, they should include a "default" material that uses said shader. This material contains the values that will be used initially when the material is created. Afterwards, any changes defined in the mate files are set.
