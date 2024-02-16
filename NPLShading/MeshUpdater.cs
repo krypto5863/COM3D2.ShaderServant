@@ -60,14 +60,14 @@ namespace ShaderServant
 			{
 				var shaderName = material.shader.name;
 
-				ShaderServant.PluginLogger.LogInfo($"Processing: {shaderName}");
+				//ShaderServant.PluginLogger.LogInfo($"Processing: {shaderName}");
 
 				if (shaderName.IndexOf("Reflection_", StringComparison.OrdinalIgnoreCase) == -1)
 				{
 					continue;
 				}
 
-				ShaderServant.PluginLogger.LogInfo($"{material.name} has called for reflection probes!");
+				//ShaderServant.PluginLogger.LogInfo($"{material.name} has called for reflection probes!");
 				_needsReflection = true;
 				ReflectionProbeController.Wake_Static();
 				_renderer.reflectionProbeUsage = ReflectionProbeUsage.BlendProbes;

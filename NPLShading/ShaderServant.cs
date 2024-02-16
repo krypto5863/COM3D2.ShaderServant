@@ -115,7 +115,7 @@ namespace ShaderServant
 			targetMaterial.shaderKeywords = materialFile.shaderKeywords.Clone() as string[];
 			targetMaterial.CopyPropertiesFromMaterial(materialFile);
 
-			PluginLogger.LogInfo($"Located un-found shader: {targetMaterial.name} | {targetMaterial.shader}");
+			//PluginLogger.LogInfo($"Located un-found shader: {targetMaterial.name} | {targetMaterial.shader}");
 
 			return false;
 		}
@@ -145,12 +145,12 @@ namespace ShaderServant
 
 			foreach (var property in mate.material.properties)
 			{
-				PluginLogger.LogInfo($"{property.name} {property.type}");
+				//PluginLogger.LogInfo($"{property.name} {property.type}");
 
 				if (property.type.Equals("f", StringComparison.OrdinalIgnoreCase) && property.name.Contains("Toggle"))
 				{
 					property.name += "_ON_SSKEYWORD";
-					PluginLogger.LogInfo($"{property.type} renamed to {property.name}");
+					//PluginLogger.LogInfo($"{property.type} renamed to {property.name}");
 				}
 			}
 
@@ -159,7 +159,7 @@ namespace ShaderServant
 			newStream.Position = oldPosition;
 			reader = new BinaryReader(newStream);
 
-			PluginLogger.LogInfo($"Successfully upgraded NPR Mate: {file}");
+			//PluginLogger.LogInfo($"Successfully upgraded NPR Mate: {file}");
 		}
 
 		private static bool NprMaterialSwap(string fileName, out string shaderName, out string shaderFile)
@@ -186,7 +186,7 @@ namespace ShaderServant
 
 		public static bool HandleExtraTextureTypes(string propertyName, string textureType, ref BinaryReader reader, ref Material material)
 		{
-			PluginLogger.LogInfo($"Was called to work on: {propertyName} {textureType} Gonna see if this is a viable type we handle...");
+			//PluginLogger.LogInfo($"Was called to work on: {propertyName} {textureType} Gonna see if this is a viable type we handle...");
 
 			if (textureType.Equals("cube"))
 			{
@@ -195,7 +195,7 @@ namespace ShaderServant
 				//Discarding. Currently useless.
 				reader.ReadString();
 
-				PluginLogger.LogInfo($"Loading texture {text5}");
+				//PluginLogger.LogInfo($"Loading texture {text5}");
 
 				var tempText = ImportCM.CreateTexture(text5 + ".tex");
 				tempText.name = text5;
@@ -227,12 +227,12 @@ namespace ShaderServant
 					num5 = 1;
 				}
 
-				PluginLogger.LogInfo("Fetching GUID");
+				//PluginLogger.LogInfo("Fetching GUID");
 
 				var characterMgr = GameMain.Instance.CharacterMgr;
 				var guid = bodySkin.body.maid.status.guid;
 
-				PluginLogger.LogInfo("Fetched GUID");
+				//PluginLogger.LogInfo("Fetched GUID");
 
 				if (!NprShader.SId.ContainsKey(guid) && NprShader.IsValid(bodySkin.body.maid) &&
 					characterMgr.GetStockMaid(guid) && NprShader.SId.Count < 32)
@@ -251,7 +251,7 @@ namespace ShaderServant
 					NprShader.SId["def"] = 30 + NprShader.SId.Count * 2;
 				}
 
-				PluginLogger.LogInfo("Did Stuff with GUID");
+				//PluginLogger.LogInfo("Did Stuff with GUID");
 
 				if (NprShader.SId.ContainsKey(guid))
 				{
@@ -262,7 +262,7 @@ namespace ShaderServant
 					material.SetFloat(propertyName, NprShader.SId["def"] + num5);
 				}
 
-				PluginLogger.LogInfo("Done with Stencil GUID Stuff.");
+				//PluginLogger.LogInfo("Done with Stencil GUID Stuff.");
 
 				return false;
 			}
@@ -273,7 +273,7 @@ namespace ShaderServant
 			{
 				var targetPropName = propertyName.ToUpper().Replace(keywordTag, string.Empty);
 
-				PluginLogger.LogInfo($"Noticed Keyword {targetPropName}");
+				//PluginLogger.LogInfo($"Noticed Keyword {targetPropName}");
 
 				// ReSharper disable once CompareOfFloatsByEqualityOperator
 				if ((value == 1f))
