@@ -6,9 +6,10 @@ A lightweight, high performance alternative to NPRShader. This point is to provi
 2. From [COM3D2.Serialization](https://github.com/luvoid/CM3D2.Serialization) grab and place the .dll from the releases into Bepinex/Plugins
 3. Go.
 
-Requires BepinEx
-Requires COM3D2.Serialization
-Requires 2.34+, currently no support for 3.0/COM 2.5
+Requires:
+- BepinEx
+- COM3D2.Serialization
+- Game Version: 2.34+, currently no support for 3.0/COM 2.5
 
 # Adding New Shaders
 Simply create an asset bundle that contains a default material and the shader it's using and ShaderServant will dynamically load and use it when a mate file asks for it.
