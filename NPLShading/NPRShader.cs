@@ -34,7 +34,6 @@ namespace ShaderServant
 		private bool _renderNextUpdate;
 		private int _renderId = -1;
 
-		
 		public static ReflectionProbeInstancer GetOrAdd(GameObject gameObject)
 		{
 			var reflectionProber = new GameObject("SSReflectionProbe")
@@ -44,7 +43,6 @@ namespace ShaderServant
 			reflectionProber.transform.parent = gameObject.transform;
 			return reflectionProber.GetOrAddComponent<ReflectionProbeInstancer>();
 		}
-		
 
 		private void Awake()
 		{
@@ -85,7 +83,7 @@ namespace ShaderServant
 		}
 	}
 	*/
-	
+
 	public class ReflectionProbeController : MonoBehaviour
 	{
 		public ReflectionProbe Probe;
@@ -161,7 +159,6 @@ namespace ShaderServant
 				Probe.transform.position = GameMain.Instance.MainCamera.GetPos();
 				Probe.center = GameMain.Instance.MainCamera.GetPos();
 			}
-			
 
 			//ShaderServant.PluginLogger.LogInfo("Probe completed a render!");
 
@@ -194,6 +191,7 @@ namespace ShaderServant
 			var instance = GetOrInitialize();
 			instance.Sleep();
 		}
+
 		public static void DoRenderNextUpdate()
 		{
 			_renderNextUpdate = true;

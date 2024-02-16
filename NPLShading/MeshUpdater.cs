@@ -41,7 +41,6 @@ namespace ShaderServant
 			PostUpdateMesh();
 		}
 
-		
 		public void OnWillRenderObject()
 		{
 			if (_needsReflection == false)
@@ -51,7 +50,6 @@ namespace ShaderServant
 
 			ReflectionProbeController.DoRenderNextUpdate();
 		}
-		
 
 		public void PostUpdateMesh()
 		{

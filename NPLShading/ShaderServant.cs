@@ -4,6 +4,7 @@ using CM3D2.Serialization;
 using CM3D2.Serialization.Files;
 using HarmonyLib;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,7 +24,7 @@ using SecurityAction = System.Security.Permissions.SecurityAction;
 namespace ShaderServant
 {
 	//This is the metadata set for your plugin.
-	[BepInPlugin("ShaderServant", "ShaderServant", "0.8")]
+	[BepInPlugin("ShaderServant", "ShaderServant", "1.0")]
 	[BepInDependency("com.habeebweeb.com3d2.meidophotostudio", BepInDependency.DependencyFlags.SoftDependency)]
 	[BepInDependency("org.bepinex.plugins.unityinjectorloader", BepInDependency.DependencyFlags.SoftDependency)]
 	public class ShaderServant : BaseUnityPlugin
@@ -42,7 +43,6 @@ namespace ShaderServant
 		internal static Material[] Materials;
 
 		public static readonly string ShaderDirectory = Paths.GameRootPath + "\\ShaderServantPacks";
-
 
 		private void Awake()
 		{
@@ -190,7 +190,6 @@ namespace ShaderServant
 
 			if (textureType.Equals("cube"))
 			{
-
 				var text5 = reader.ReadString();
 
 				//Discarding. Currently useless.
@@ -236,12 +235,12 @@ namespace ShaderServant
 				PluginLogger.LogInfo("Fetched GUID");
 
 				if (!NprShader.SId.ContainsKey(guid) && NprShader.IsValid(bodySkin.body.maid) &&
-				    characterMgr.GetStockMaid(guid) && NprShader.SId.Count < 32)
+					characterMgr.GetStockMaid(guid) && NprShader.SId.Count < 32)
 				{
 					for (var k = 0; k < characterMgr.GetStockMaidCount(); k++)
 					{
 						if (characterMgr.GetStockMaid(k) != null &&
-						    characterMgr.GetStockMaid(k).status.guid == guid)
+							characterMgr.GetStockMaid(k).status.guid == guid)
 						{
 							NprShader.SId[guid] = 32 + NprShader.SId.Count * 2;
 						}
@@ -290,6 +289,23 @@ namespace ShaderServant
 			}
 
 			return true;
+		}
+
+		private static IEnumerator UpdaterAddCallback(TBodySkin objectToAdd)
+		{
+			var attemptFrames = 0;
+			while (attemptFrames < 5)
+			{
+				if (objectToAdd?.obj?.GetComponentInChildren<SkinnedMeshRenderer>(true) == null)
+				{
+					attemptFrames++;
+					yield return null;
+					continue;
+				}
+
+				AddMeshTracker(ref objectToAdd);
+				yield break;
+			}
 		}
 
 		[HarmonyPatch(typeof(ImportCM), "LoadMaterial")]
@@ -446,7 +462,9 @@ namespace ShaderServant
 			var renderer = __1.obj?.GetComponentInChildren<SkinnedMeshRenderer>(true);
 			if (renderer == null)
 			{
-				PluginLogger.LogWarning("Could not find an SKM in the processed material!!");
+				PluginLogger.LogWarning("Could not find an SKM in the processed material!! Will attempt adding the updater next frame...");
+				Instance.StartCoroutine(UpdaterAddCallback(__1));
+				return;
 			}
 
 			MeshUpdater.GetOrAddComponent(renderer);

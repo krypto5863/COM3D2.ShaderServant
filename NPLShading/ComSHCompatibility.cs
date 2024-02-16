@@ -1,6 +1,6 @@
-﻿using System.Reflection;
-using COM3D2.ComSh.Plugin;
+﻿using COM3D2.ComSh.Plugin;
 using HarmonyLib;
+using System.Reflection;
 using UnityEngine;
 
 namespace ShaderServant
@@ -14,6 +14,7 @@ namespace ShaderServant
 
 			harmony.Patch(targetMethod, null, patchMethod);
 		}
+
 		public static void AddMeshTracker(ref Transform __0)
 		{
 			var renderer = __0.GetComponentInChildren<SkinnedMeshRenderer>(true);

@@ -93,7 +93,7 @@ namespace ShaderServant
 			return cubemap;
 		}
 
-		static Texture2D CreateCubemapTexture(Texture2D m_srcTexture, int texSize, int faceIndex)
+		private static Texture2D CreateCubemapTexture(Texture2D m_srcTexture, int texSize, int faceIndex)
 		{
 			var tex = new Texture2D(texSize, texSize, TextureFormat.RGB24, false);
 
@@ -165,7 +165,7 @@ namespace ShaderServant
 			return tex;
 		}
 
-		static Color CalcProjectionSpherical(Texture2D m_srcTexture, Vector3 vDir)
+		private static Color CalcProjectionSpherical(Texture2D m_srcTexture, Vector3 vDir)
 		{
 			var theta = Mathf.Atan2(vDir.z, vDir.x);  // -π ～ +π (vertical rotation)
 			var phi = Mathf.Acos(vDir.y);             //  0  ～ +π (horizontal rotation)
@@ -199,7 +199,7 @@ namespace ShaderServant
 			return col;
 		}
 
-		static Texture2D FlipPixels(Texture2D texture, bool flipX, bool flipY)
+		private static Texture2D FlipPixels(Texture2D texture, bool flipX, bool flipY)
 		{
 			if (!flipX && !flipY)
 			{
