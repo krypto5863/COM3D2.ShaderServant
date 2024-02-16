@@ -27,7 +27,7 @@ ShaderServant works perfectly fine with NPR materials. You don't **need** to do 
 
 NPR material files are denoted by using `_NPRMAT_SomeShaderName` in order to load shaders. However, when SS(ShaderServant) detects `_NPRMAT_` it will internally convert it to an advanced material but if you mix the keyword with advanced material functions, it will produce errors. Your advanced materials should be named just like your typical materials. Whatever you want, just no `_NPRMAT_`
 
-![image](https://github.com/krypto5863/COM3D2.ShaderServant/assets/29824718/c79a6441-5eaf-41b1-869d-53409e7bcb8c)
+![image](https://github.com/krypto5863/COM3D2.ShaderServant/assets/29824718/b2478521-f7cc-4812-8d1b-7cfdbbb8f744)
 
 ## Set Shaders
 NPR used the shader fields within the mate files as a fallback and relied on the file naming convention to fetch the shader it wanted. But this creates undue complexity for little return. We instead use old reliable and fetch the shaders the old fashioned way. Here is an example of the values you might put into shader fields.
