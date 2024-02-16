@@ -32,9 +32,6 @@ NPR material files are denoted by using `_NPRMAT_SomeShaderName` in order to loa
 ## Set Shaders
 NPR used the shader fields within the mate files as a fallback and relied on the file naming convention to fetch the shader it wanted. But this creates undue complexity for little return. We instead use old reliable and fetch the shaders the old fashioned way. Here is an example of the values you might put into shader fields.
 
-Shader Name: `com3d2mod/Standard_NPRToon_`
-Material Template Name: `com3d2mod_NPRToon_`
-
 ![image](https://github.com/krypto5863/COM3D2.ShaderServant/assets/29824718/7cf17cd6-8c69-4d1e-a305-f86968bd7047)
 ![image](https://github.com/krypto5863/COM3D2.ShaderServant/assets/29824718/d78654f7-6363-4a64-b354-199d1e7e8df7)
 
