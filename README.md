@@ -1,6 +1,8 @@
 # ShaderServant
 A lightweight, high performance alternative to NPRShader. This point is to provide a simple and non-intrusive external shader loader while also supporting the old NPR standard.
 
+Standard support for MeidoPhotoStudio and COMSh.
+
 # Usage
 1. Throw the folders within the packaged archive into your root game folder. <sub>Psst! this is the same folder where COM3D2.exe can be found!</sub>
 2. From [COM3D2.Serialization](https://github.com/luvoid/CM3D2.Serialization) grab and place the .dll from the releases into Bepinex/Plugins
