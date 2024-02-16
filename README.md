@@ -2,11 +2,16 @@
 A lightweight, high performance alternative to NPRShader. This point is to provide a simple and non-intrusive external shader loader while also supporting the old NPR standard.
 
 # Usage
-1. Just throw the two files into `bepinex/plugins`
-2. Place shader packages in `ShaderServantPacks`
+1. Throw the folders within the packaged archive into your game.
+2. From [COM3D2.Serialization](https://github.com/luvoid/CM3D2.Serialization) grab and place the .dll from the releases into Bepinex/Plugins
 3. Go.
 
+Requires BepinEx
+Requires COM3D2.Serialization
 Requires 2.34+, currently no support for 3.0/COM 2.5
+
+# Adding New Shaders
+Simply create an asset bundle that contains a default material and the shader it's using and ShaderServant will dynamically load and use it when a mate file asks for it.
 
 # Advanced Mates
 This plugin seeks to be a simple and flexible external shader loader. So apart from loading all of NPRShader's shaders, it also can load any shader packages placed into ShaderServantPacks.
