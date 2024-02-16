@@ -2,7 +2,7 @@
 A lightweight, high performance alternative to NPRShader. This point is to provide a simple and non-intrusive external shader loader while also supporting the old NPR standard.
 
 # Usage
-1. Throw the folders within the packaged archive into your root game folder. <sub>Psst! this is where COM3D2.exe lives</sub>.
+1. Throw the folders within the packaged archive into your root game folder. <sub>Psst! this is where COM3D2.exe lives!</sub>
 2. From [COM3D2.Serialization](https://github.com/luvoid/CM3D2.Serialization) grab and place the .dll from the releases into Bepinex/Plugins
 3. Go.
 
