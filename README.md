@@ -12,7 +12,7 @@ Requires:
 - Game Version: 2.34+, currently no support for 3.0/COM 2.5
 
 # Adding New Shaders
-Simply create an asset bundle that contains a default material and the shader it's using and ShaderServant will dynamically load and use it when a mate file asks for it.
+Simply create an asset bundle that contains a default material and the shader it's using and ShaderServant will dynamically load and use it when a mate file asks for it. If you have a shader pack and would like it to be included with ShaderServant, feel free to raise an issue and include your file
 
 # Advanced Mates
 This plugin seeks to be a simple and flexible external shader loader. So apart from loading all of NPRShader's shaders, it also can load any shader packages placed into ShaderServantPacks.
