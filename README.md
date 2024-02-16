@@ -37,6 +37,7 @@ NPR used the shader fields within the mate files as a fallback and relied on the
 
 ### Where can I find shader name and material names?
 On startup, NPR will log all shader names and their materials to the output log and to the console. You can check inside of `bepinex/LogOutput.log` for something as follows:
+
 ![image](https://github.com/krypto5863/COM3D2.ShaderServant/assets/29824718/64acd59d-113d-4f92-87ee-36c579fd99af)
 
 ### Material Template?
