@@ -60,5 +60,3 @@ Your float value itself should be 0 or 1:
 Cubemaps are special textures that need to be converted internally to cubemaps and then set to their appropriate property. Sadly, there is no way to detect when a property takes a cubemap, so you will need to manually tell SS that this texture should be loaded as a cubemap. To do so, simply change the texture type from `tex2d` to `cube` in the mate file.
 
 ![image](https://github.com/krypto5863/COM3D2.ShaderServant/assets/29824718/bf3529e3-28da-4527-8e64-04a261be151f)
-
-**Will not work if you leave the `_NPRMAT_` keyword**
