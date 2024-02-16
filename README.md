@@ -36,6 +36,8 @@ Shader Name: `com3d2mod/Standard_NPRToon_`
 Material Template Name: `com3d2mod_NPRToon_`
 
 ![image](https://github.com/krypto5863/COM3D2.ShaderServant/assets/29824718/7cf17cd6-8c69-4d1e-a305-f86968bd7047)
+![image](https://github.com/krypto5863/COM3D2.ShaderServant/assets/29824718/d78654f7-6363-4a64-b354-199d1e7e8df7)
+
 
 ### Material Template?
 When modders add shaders into a shader package, they should include a "default" material that uses said shader. This material contains the values that will be used initially when the material is created. Afterwards, any changes defined in the mate files are set.
