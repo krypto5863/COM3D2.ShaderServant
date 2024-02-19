@@ -1,9 +1,9 @@
 # ShaderServant
-A lightweight, high performance alternative to NPRShader. This point is to provide a simple and non-intrusive external shader loader while also supporting the old NPR standard.
+A lightweight, high performance alternative to NPRShader. This point is to provide a simple and non-intrusive external shader loader while also supporting the old NPR standard. To clarify, this means NPR materials work **perfectly fine without any edits**.
 
 Standard support for MeidoPhotoStudio and COMSh.
 
-# Usage
+# Installation
 1. Throw the folders within the packaged archive into your root game folder. <sub>Psst! this is the same folder where COM3D2.exe can be found!</sub>
 2. From [COM3D2.Serialization](https://github.com/luvoid/CM3D2.Serialization) grab and place the .dll from the releases into Bepinex/Plugins
 3. Go.
@@ -18,6 +18,9 @@ Requires:
 # Adding New Shaders
 Simply create an asset bundle that contains a default material and the shader it's using and ShaderServant will dynamically load and use it when a mate file asks for it. If you have a shader pack and would like it to be included with ShaderServant, feel free to raise an issue and include your file.
 
+# NPR Material Support
+ShaderServant works perfectly fine with NPR materials. Again, you do **not** need to change your materials at all if they worked with NPRShader. The below edits open up custom functionality not available in NPRShader, unique to ShaderServant.
+
 # Advanced Mates
 This plugin seeks to be a simple and flexible external shader loader. So apart from loading all of NPRShader's shaders, it also can load any shader packages placed into ShaderServantPacks.
 However, in doing this, we saw there was a need for a more efficient and flexible way of toggling keywords and setting cubemaps. This is our advanced mates format that only works with ShaderServant.
@@ -25,8 +28,6 @@ However, in doing this, we saw there was a need for a more efficient and flexibl
 If you wish to use advanced material functions, keep reading. Also, you're gonna need updated tools to handle the cube texture type: [Updated English Tools](https://www.mediafire.com/file/r2hqhlggi10ev5i/%255BCOM3D2%255DEnglish_Mod_Tools_Pack_3.28.2020.zip/file)
 
 ## Remove `_NPRMAT_` from file name!
-ShaderServant works perfectly fine with NPR materials. You don't **need** to do this if you don't plan to use keyword toggling. You can do it for whatever reason you desire though.
-
 NPR material files are denoted by using `_NPRMAT_SomeShaderName` in order to load shaders. However, when SS(ShaderServant) detects `_NPRMAT_` it will internally convert it to an advanced material but if you mix the keyword with advanced material functions, it will produce errors. Your advanced materials should be named just like your typical materials. Whatever you want, just no `_NPRMAT_`
 
 ![image](https://github.com/krypto5863/COM3D2.ShaderServant/assets/29824718/b2478521-f7cc-4812-8d1b-7cfdbbb8f744)
