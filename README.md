@@ -18,7 +18,7 @@ Requires:
 # Adding New Shaders
 Simply create an asset bundle that contains a default material and the shader it's using and ShaderServant will dynamically load and use it when a mate file asks for it. If you have a shader pack and would like it to be included with ShaderServant, feel free to raise an issue and include your file.
 
-# NPR Material Support
+# NPRShader Material Support
 ShaderServant works perfectly fine with NPR materials. Again, you do **not** need to change your materials at all if they worked with NPRShader. The below edits open up custom functionality not available in NPRShader, unique to ShaderServant.
 
 # Advanced Mates
