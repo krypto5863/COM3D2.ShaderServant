@@ -516,7 +516,7 @@ namespace ShaderServant
 		[HarmonyPostfix]
 		public static void AddMeshTracker(ref TBodySkin __1, ref Material __result)
 		{
-			PluginLogger.LogInfo($"Done loading material {__result.name} with {__result.shader.name} @\n{Environment.StackTrace}");
+			//PluginLogger.LogInfo($"Done loading material {__result.name} with {__result.shader.name} @\n{Environment.StackTrace}");
 
 			if (__1 == null)
 			{
@@ -568,7 +568,7 @@ namespace ShaderServant
 
 				if (Materials.Any(r => r.shader == previousShader))
 				{
-					PluginLogger.LogInfo("Denied a shader change, our shaders may not be changed.");
+					//PluginLogger.LogInfo("Denied a shader change, our shaders may not be changed.");
 					return false;
 				}
 			}
