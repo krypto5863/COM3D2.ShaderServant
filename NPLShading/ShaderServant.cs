@@ -62,9 +62,8 @@ namespace ShaderServant
 				PluginLogger.LogFatal("ShaderServant is missing some dependencies! Your game will now quit.");
 
 				const string message = "ShaderServant is missing CM3D2.Serialization!\nShaderServant が CM3D2.Serialization がないよ!";
-
-				NUty.WinMessageBox(NUty.GetWindowHandle(), message, "Missing Reference!", 0x00000010 | 0x00000000);
-				//NDebug.Assert("ShaderServant is missing CM3D2.Serialization!\nShaderServant が CM3D2.Serialization がないよ!", false);
+				Assert(message, "Missing Reference!");
+				//NUty.WinMessageBox(NUty.GetWindowHandle(), message, "Missing Reference!", 0x00000010 | 0x00000000);
 			}
 
 			var shaderPackages = Directory.GetFiles(ShaderDirectory);
@@ -118,6 +117,11 @@ namespace ShaderServant
 			{
 				Debug.LogWarning("ComSH was not patched! Might not be loaded...");
 			}
+		}
+		private static void Assert(string message, string title)
+		{
+			NUty.WinMessageBox(NUty.GetWindowHandle(), message, title, 0x00000010 | 0x00000000);
+			UnityEngine.Application.Quit();
 		}
 
 		public static bool LoadExternalMaterial(string shaderFileName, ref Material targetMaterial)
