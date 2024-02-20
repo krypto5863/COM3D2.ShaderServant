@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using BepInEx.Configuration;
 using BepInEx.Logging;
 using CM3D2.Serialization;
 using CM3D2.Serialization.Files;
@@ -14,6 +15,7 @@ using System.Security.Permissions;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static RootMotion.FinalIK.InteractionObject;
 using Material = UnityEngine.Material;
 using SecurityAction = System.Security.Permissions.SecurityAction;
 
@@ -36,7 +38,7 @@ namespace ShaderServant
 		internal static ManualLogSource PluginLogger => Instance.Logger;
 
 		//Config entry variable. You set your configs to this.
-		//internal static ConfigEntry<bool> ExampleConfig;
+		internal static ConfigEntry<bool> DeepSearchForSKMs;
 
 		internal static Queue<MeshUpdater> Queue = new Queue<MeshUpdater>();
 
@@ -48,6 +50,22 @@ namespace ShaderServant
 		{
 			//Useful for engaging co-routines or accessing variables non-static variables. Completely optional though.
 			Instance = this;
+
+			var plugs = Directory.GetFiles(Paths.PluginPath, "*", SearchOption.AllDirectories)
+				.Select(t => Path.GetFileName(t).ToLower())
+				.ToArray();
+
+			var hasDependencies = plugs.Contains("cm3d2.serialization.dll");
+
+			if (!hasDependencies)
+			{
+				PluginLogger.LogFatal("ShaderServant is missing some dependencies! Your game will now quit.");
+
+				const string message = "ShaderServant is missing CM3D2.Serialization!\nShaderServant が CM3D2.Serialization がないよ!";
+
+				NUty.WinMessageBox(NUty.GetWindowHandle(), message, "Missing Reference!", 0x00000010 | 0x00000000);
+				//NDebug.Assert("ShaderServant is missing CM3D2.Serialization!\nShaderServant が CM3D2.Serialization がないよ!", false);
+			}
 
 			var shaderPackages = Directory.GetFiles(ShaderDirectory);
 
@@ -76,7 +94,7 @@ namespace ShaderServant
 			}
 
 			//Binds the configuration. In other words it sets your ConfigEntry var to your config setup.
-			//ExampleConfig = Config.Bind("Section", "Name", false, "Description");
+			DeepSearchForSKMs = Config.Bind("General", "Deep Search SkinnedMeshRenderers", false, "Not suggested, it can cause performance hikes when a third party plugin spawns an NPR item and it isn't directly supported by SS. However, it will make things work properly.");
 
 			SceneManager.sceneLoaded += NprShader.OnSceneLoaded;
 
@@ -129,7 +147,7 @@ namespace ShaderServant
 
 			if (!NprMaterialSwap(file, out var shaderName, out var shaderFile))
 			{
-				PluginLogger.LogWarning($"{file} has NPR keyword but a shader could not be resolved!");
+				PluginLogger.LogError($"{file} has NPR keyword but a shader could not be resolved!");
 				return;
 			}
 
@@ -147,7 +165,8 @@ namespace ShaderServant
 			{
 				//PluginLogger.LogInfo($"{property.name} {property.type}");
 
-				if (property.type.Equals("f", StringComparison.OrdinalIgnoreCase) && property.name.Contains("Toggle"))
+				if (property.type.Equals("f", StringComparison.OrdinalIgnoreCase) &&
+					property.name.Contains("Toggle"))
 				{
 					property.name += "_ON_SSKEYWORD";
 					//PluginLogger.LogInfo($"{property.type} renamed to {property.name}");
@@ -156,10 +175,9 @@ namespace ShaderServant
 
 			var newStream = new MemoryStream();
 			serializer.Serialize(newStream, mate);
+
 			newStream.Position = oldPosition;
 			reader = new BinaryReader(newStream);
-
-			//PluginLogger.LogInfo($"Successfully upgraded NPR Mate: {file}");
 		}
 
 		private static bool NprMaterialSwap(string fileName, out string shaderName, out string shaderFile)
@@ -291,10 +309,41 @@ namespace ShaderServant
 			return true;
 		}
 
-		private static IEnumerator UpdaterAddCallback(TBodySkin objectToAdd)
+		private static IEnumerator SKMDeepSearch(Material material)
+		{
+			yield return null;
+
+			PluginLogger.LogWarning("Starting deep search for SkinnedMeshRenderer!");
+
+			var attemptFrames = 0;
+			while (++attemptFrames < 5)
+			{
+				PluginLogger.LogWarning($"Deep search: #{attemptFrames}");
+
+				var foundSkMs = FindObjectsOfType<SkinnedMeshRenderer>()
+					.Where(r => r.sharedMaterials.Contains(material));
+
+				if (!foundSkMs.Any())
+				{
+					yield return null;
+					continue;
+				}
+
+				foreach (var SKM in foundSkMs)
+				{
+					MeshUpdater.GetOrAddComponent(SKM);
+				}
+
+				break;
+			}
+
+			PluginLogger.LogWarning($"Deep search complete! Success: {attemptFrames >= 5}");
+		}
+
+		private static IEnumerator UpdaterCallBack(TBodySkin objectToAdd, Material material)
 		{
 			var attemptFrames = 0;
-			while (attemptFrames < 5)
+			while (attemptFrames < 5 && objectToAdd != null)
 			{
 				if (objectToAdd?.obj?.GetComponentInChildren<SkinnedMeshRenderer>(true) == null)
 				{
@@ -303,9 +352,18 @@ namespace ShaderServant
 					continue;
 				}
 
-				AddMeshTracker(ref objectToAdd);
+				AddMeshTracker(ref objectToAdd, ref material);
 				yield break;
 			}
+
+			if (DeepSearchForSKMs.Value)
+			{
+				PluginLogger.LogWarning("Couldn't find the SKM in the object... Resorting to a deep search...");
+				yield return SKMDeepSearch(material);
+				yield break;
+			}
+
+			PluginLogger.LogWarning("Failed to find SKM for an object... If it contains a special material, it's going to look weird.");
 		}
 
 		[HarmonyPatch(typeof(ImportCM), "LoadMaterial")]
@@ -452,10 +510,18 @@ namespace ShaderServant
 
 		[HarmonyPatch(typeof(ImportCM), "LoadMaterial")]
 		[HarmonyPostfix]
-		public static void AddMeshTracker(ref TBodySkin __1)
+		public static void AddMeshTracker(ref TBodySkin __1, ref Material __result)
 		{
+			PluginLogger.LogInfo($"Done loading material {__result.name} with {__result.shader.name} @\n{Environment.StackTrace}");
+
 			if (__1 == null)
 			{
+				if (DeepSearchForSKMs.Value)
+				{
+					PluginLogger.LogWarning("TBodySkin was passed as null! Resorting to a deep search...");
+					Instance.StartCoroutine(SKMDeepSearch(__result));
+				}
+
 				return;
 			}
 
@@ -463,11 +529,47 @@ namespace ShaderServant
 			if (renderer == null)
 			{
 				PluginLogger.LogWarning("Could not find an SKM in the processed material!! Will attempt adding the updater next frame...");
-				Instance.StartCoroutine(UpdaterAddCallback(__1));
+				Instance.StartCoroutine(UpdaterCallBack(__1, __result));
 				return;
 			}
 
 			MeshUpdater.GetOrAddComponent(renderer);
+		}
+
+		//Hackish fix for Kiss changing the shader in these particular items and in those exact slots for some reason...
+		[HarmonyPatch(typeof(TBodySkin), "ChangeShader", typeof(int), typeof(Shader))]
+		[HarmonyPrefix]
+		public static bool FilterShaderChangeRequests(ref TBodySkin __instance, ref int __0, ref Shader __1)
+		{
+			if ((__instance.Category.Equals("body") == false || __0 != 0) && (__instance.Category.Equals("head") == false || __0 != 5))
+			{
+				return true;
+			}
+
+			var gameObject = __instance.obj;
+			if (gameObject == null)
+			{
+				return false;
+			}
+
+			foreach (var transform in gameObject.transform.GetComponentsInChildren<Transform>(true))
+			{
+				var component = transform.GetComponent<Renderer>();
+				if (component == null || __0 >= component.sharedMaterials.Length)
+				{
+					continue;
+				}
+
+				var previousShader = component.sharedMaterials[__0].shader;
+
+				if (Materials.Any(r => r.shader == previousShader))
+				{
+					PluginLogger.LogInfo("Denied a shader change, our shaders may not be changed.");
+					return false;
+				}
+			}
+
+			return true;
 		}
 	}
 }
