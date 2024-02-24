@@ -7,6 +7,7 @@ using HarmonyLib;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection.Emit;
@@ -15,6 +16,7 @@ using System.Security.Permissions;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Debug = UnityEngine.Debug;
 using Material = UnityEngine.Material;
 using SecurityAction = System.Security.Permissions.SecurityAction;
 
@@ -37,7 +39,9 @@ namespace ShaderServant
 		internal static ManualLogSource PluginLogger => Instance.Logger;
 
 		//Config entry variable. You set your configs to this.
-		internal static ConfigEntry<bool> DeepSearchForSKMs;
+
+		//Deep searching is so fast and so beneficial, it makes sense to make this standard behavior.
+		//internal static ConfigEntry<bool> DeepSearchForSKMs;
 
 		internal static ConfigEntry<int> ReflectionResolution;
 		internal static ConfigEntry<float> ReflectionRange;
@@ -95,7 +99,7 @@ namespace ShaderServant
 			}
 
 			//Binds the configuration. In other words it sets your ConfigEntry var to your config setup.
-			DeepSearchForSKMs = Config.Bind("General", "Deep Search SkinnedMeshRenderers", false, "Not suggested, it can cause performance hikes when a third party plugin spawns an NPR item and it isn't directly supported by SS. However, it will make things work properly.");
+			//DeepSearchForSKMs = Config.Bind("General", "Deep Search SkinnedMeshRenderers", false, "Not suggested, it can cause performance hikes when a third party plugin spawns an NPR item and it isn't directly supported by SS. However, it will make things work properly.");
 			ReflectionResolution = Config.Bind("Reflections", "Resolution", 256, new ConfigDescription("The resolution of reflections. More means better but also more intensive.", new AcceptableValueList<int>(16, 32, 64, 128, 256, 512, 1024, 2048)));
 			ReflectionRange = Config.Bind("Reflections", "Range", 512f, "How far reflections will be rendered. More means you see further in reflections but also more intensive.");
 
@@ -341,35 +345,39 @@ namespace ShaderServant
 			return true;
 		}
 
-		private static IEnumerator SKMDeepSearch(Material material)
+		private static IEnumerator SkmDeepSearch(Material material)
 		{
 			yield return null;
 
-			PluginLogger.LogWarning("Starting deep search for SkinnedMeshRenderer!");
+			var watch = Stopwatch.StartNew();
+
+			//PluginLogger.LogWarning("Starting deep search for SkinnedMeshRenderer!");
 
 			var attemptFrames = 0;
 			while (++attemptFrames < 5)
 			{
-				PluginLogger.LogWarning($"Deep search: #{attemptFrames}");
+				//PluginLogger.LogWarning($"Deep search: #{attemptFrames}");
 
-				var foundSkMs = FindObjectsOfType<SkinnedMeshRenderer>()
-					.Where(r => r.sharedMaterials.Contains(material));
+				var matchingSkinnedMeshRenderers = FindObjectsOfType<SkinnedMeshRenderer>()
+					.Where(r => r.sharedMaterials.Contains(material)).ToArray();
 
-				if (!foundSkMs.Any())
+				if (!matchingSkinnedMeshRenderers.Any())
 				{
+					watch.Stop();
 					yield return null;
+					watch.Start();
 					continue;
 				}
 
-				foreach (var SKM in foundSkMs)
+				foreach (var skinnedMeshRenderer in matchingSkinnedMeshRenderers)
 				{
-					MeshUpdater.GetOrAddComponent(SKM);
+					MeshUpdater.GetOrAddComponent(skinnedMeshRenderer);
 				}
 
 				break;
 			}
 
-			PluginLogger.LogWarning($"Deep search complete! Success: {attemptFrames >= 5}");
+			PluginLogger.LogMessage($"Deep search complete! Attempts: {attemptFrames} | Success: {attemptFrames < 5} | Time: {watch.Elapsed}");
 		}
 
 		private static IEnumerator UpdaterCallBack(TBodySkin objectToAdd, Material material)
@@ -388,14 +396,8 @@ namespace ShaderServant
 				yield break;
 			}
 
-			if (DeepSearchForSKMs.Value)
-			{
-				PluginLogger.LogWarning("Couldn't find the SKM in the object... Resorting to a deep search...");
-				yield return SKMDeepSearch(material);
-				yield break;
-			}
-
-			PluginLogger.LogWarning("Failed to find SKM for an object... If it contains a special material, it's going to look weird.");
+			PluginLogger.LogWarning("Couldn't find the SKM in the object... Resorting to a deep search...");
+			yield return SkmDeepSearch(material);
 		}
 
 		[HarmonyPatch(typeof(ImportCM), "LoadMaterial")]
@@ -575,11 +577,8 @@ namespace ShaderServant
 
 			if (__1 == null)
 			{
-				if (DeepSearchForSKMs.Value)
-				{
-					PluginLogger.LogWarning("TBodySkin was passed as null! Resorting to a deep search...");
-					Instance.StartCoroutine(SKMDeepSearch(__result));
-				}
+				PluginLogger.LogWarning("TBodySkin was passed as null! Resorting to a deep search...");
+				Instance.StartCoroutine(SkmDeepSearch(__result));
 
 				return;
 			}
