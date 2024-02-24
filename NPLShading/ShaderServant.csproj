@@ -48,12 +48,6 @@
     <Reference Include="CM3D2.Serialization">
       <HintPath>C:\Users\Auroras\Source\Repos\CM3D2.Serialization\CM3D2.Serialization\bin\Debug\net35\CM3D2.Serialization.dll</HintPath>
     </Reference>
-    <Reference Include="COM3D2.ComSh.Plugin">
-      <HintPath>..\..\..\..\Downloads\COM3D2.ComSh.Plugin.dll</HintPath>
-    </Reference>
-    <Reference Include="MeidoPhotoStudio.Plugin">
-      <HintPath>..\..\..\..\Desktop\Game Related Files\Meido Related Stuff\Meido Assemblies\COM Assemblies\CommunityModPlugins\MeidoPhotoStudio.Plugin.dll</HintPath>
-    </Reference>
     <Reference Include="Mono.Cecil, Version=0.10.4.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
       <HintPath>..\packages\Mono.Cecil.0.10.4\lib\net35\Mono.Cecil.dll</HintPath>
     </Reference>

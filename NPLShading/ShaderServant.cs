@@ -100,7 +100,7 @@ namespace ShaderServant
 			//Binds the configuration. In other words it sets your ConfigEntry var to your config setup.
 			//DeepSearchForSKMs = Config.Bind("General", "Deep Search SkinnedMeshRenderers", false, "Not suggested, it can cause performance hikes when a third party plugin spawns an NPR item and it isn't directly supported by SS. However, it will make things work properly.");
 			ReflectionResolution = Config.Bind("Reflections", "Resolution", 256, new ConfigDescription("The resolution of reflections. More means better but also more intensive.", new AcceptableValueList<int>(16, 32, 64, 128, 256, 512, 1024, 2048)));
-			ReflectionRange = Config.Bind("Reflections", "Range", 512f, "How far reflections will be rendered. More means you see further in reflections but also more intensive.");
+			ReflectionRange = Config.Bind("Reflections", "Range", 512f, "From how far away a reflecting object will reflect. This is the relationship between your camera and object's distance.");
 
 			ReflectionResolution.SettingChanged += (s, e) =>
 			{
