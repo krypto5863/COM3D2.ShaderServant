@@ -1,7 +1,7 @@
 # ShaderServant
 A lightweight, high performance alternative to NPRShader. This point is to provide a simple and non-intrusive external shader loader while also supporting the old NPR standard. To clarify, this means NPR materials work **perfectly fine without any edits**.
 
-Standard support for MeidoPhotoStudio and COMSh.
+Global plugin support for all plugins that use standard game functions to read materials!
 
 # Installation
 1. Throw the folders within the packaged archive into your root game folder. <sub>Psst! this is the same folder where COM3D2.exe can be found!</sub>
