@@ -25,7 +25,7 @@ using SecurityAction = System.Security.Permissions.SecurityAction;
 namespace ShaderServant
 {
 	//This is the metadata set for your plugin.
-	[BepInPlugin("ShaderServant", "ShaderServant", "1.1")]
+	[BepInPlugin("ShaderServant", "ShaderServant", "1.2")]
 	[BepInDependency("com.habeebweeb.com3d2.meidophotostudio", BepInDependency.DependencyFlags.SoftDependency)]
 	[BepInDependency("org.bepinex.plugins.unityinjectorloader", BepInDependency.DependencyFlags.SoftDependency)]
 	public class ShaderServant : BaseUnityPlugin
