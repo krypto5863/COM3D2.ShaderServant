@@ -86,10 +86,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ComSHCompatibility.cs" />
+    <None Include="ComSHCompatibility.cs" />
     <Compile Include="CubemapConverter.cs" />
     <Compile Include="MeshUpdater.cs" />
-    <Compile Include="MPSCompatibility.cs" />
+    <None Include="MPSCompatibility.cs" />
     <Compile Include="ReflectionProbeController.cs" />
     <Compile Include="ShaderServant.cs" />
     <Compile Include="NPRShader.cs" />

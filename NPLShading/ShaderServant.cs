@@ -16,7 +16,6 @@ using System.Security.Permissions;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Debug = UnityEngine.Debug;
 using Material = UnityEngine.Material;
 using SecurityAction = System.Security.Permissions.SecurityAction;
 
@@ -81,7 +80,7 @@ namespace ShaderServant
 				try
 				{
 					var shaderBundle = AssetBundle.LoadFromFile(shaderFile);
-					materialList = materialList.Concat(shaderBundle.LoadAllAssets<Material>());
+					materialList = materialList.Concat(shaderBundle.LoadAllAssets<Material>()).ToArray();
 					shaderBundle.Unload(false);
 				}
 				catch
@@ -118,6 +117,7 @@ namespace ShaderServant
 			//Installs the patches in the Main class.
 			var harmony = Harmony.CreateAndPatchAll(typeof(ShaderServant));
 
+			/*
 			try
 			{
 				harmony.PatchAll(typeof(MpsCompatibility));
@@ -135,6 +135,7 @@ namespace ShaderServant
 			{
 				Debug.LogWarning("ComSH was not patched! Might not be loaded...");
 			}
+			*/
 		}
 
 		private static void Assert(string message, string title)
@@ -377,7 +378,7 @@ namespace ShaderServant
 				break;
 			}
 
-			PluginLogger.LogMessage($"Deep search complete! Attempts: {attemptFrames} | Success: {attemptFrames < 5} | Time: {watch.Elapsed}");
+			PluginLogger.LogInfo($"Deep search complete! Attempts: {attemptFrames} | Success: {attemptFrames < 5} | Time: {watch.Elapsed}");
 		}
 
 		private static IEnumerator UpdaterCallBack(TBodySkin objectToAdd, Material material)
@@ -396,7 +397,7 @@ namespace ShaderServant
 				yield break;
 			}
 
-			PluginLogger.LogWarning("Couldn't find the SKM in the object... Resorting to a deep search...");
+			//PluginLogger.LogWarning("Couldn't find the SKM in the object... Resorting to a deep search...");
 			yield return SkmDeepSearch(material);
 		}
 
@@ -416,7 +417,7 @@ namespace ShaderServant
 				.Insert(new CodeInstruction(OpCodes.Ldloca_S, 3),
 					new CodeInstruction(OpCodes.Ldarg_0),
 					new CodeInstruction(OpCodes.Call,
-						typeof(ShaderServant).GetMethod("ForceNprCompatibility")));
+						typeof(ShaderServant).GetMethod(nameof(ForceNprCompatibility))));
 
 			return codeMatch.InstructionEnumeration();
 		}
@@ -515,7 +516,7 @@ namespace ShaderServant
 					new CodeInstruction(OpCodes.Ldarga_S, 0),
 					new CodeInstruction(OpCodes.Ldloca_S, 3),
 					new CodeInstruction(OpCodes.Call,
-						typeof(ShaderServant).GetMethod("HandleExtraTextureTypes")),
+						typeof(ShaderServant).GetMethod(nameof(HandleExtraTextureTypes))),
 					new CodeInstruction(OpCodes.Brfalse_S, newLabel),
 					new CodeInstruction(OpCodes.Br, brMatch));
 
@@ -547,7 +548,7 @@ namespace ShaderServant
 					new CodeInstruction(OpCodes.Ldarga_S, 1),
 					new CodeInstruction(OpCodes.Ldloca_S, 3),
 					new CodeInstruction(OpCodes.Call,
-						typeof(ShaderServant).GetMethod("DoFloatStuff")),
+						typeof(ShaderServant).GetMethod(nameof(DoFloatStuff))),
 					new CodeInstruction(OpCodes.Brfalse_S, newLabel));
 
 			return codeMatch.InstructionEnumeration();
@@ -562,7 +563,6 @@ namespace ShaderServant
 				return;
 			}
 
-			//Todo should be 1.0 when in dance mode!
 			var enableLightDir = NprShader.IsDance ? 1.0f : 0.0f;
 
 			__result.SetFloat("_CUSTOMSPOTLIGHTDIR", enableLightDir);
@@ -577,7 +577,7 @@ namespace ShaderServant
 
 			if (__1 == null)
 			{
-				PluginLogger.LogWarning("TBodySkin was passed as null! Resorting to a deep search...");
+				//PluginLogger.LogWarning("TBodySkin was passed as null! Resorting to a deep search...");
 				Instance.StartCoroutine(SkmDeepSearch(__result));
 
 				return;
@@ -586,7 +586,7 @@ namespace ShaderServant
 			var renderer = __1.obj?.GetComponentInChildren<SkinnedMeshRenderer>(true);
 			if (renderer == null)
 			{
-				PluginLogger.LogWarning("Could not find an SKM in the processed material!! Will attempt adding the updater next frame...");
+				//PluginLogger.LogWarning("Could not find an SKM in the processed material!! Will attempt adding the updater next frame...");
 				Instance.StartCoroutine(UpdaterCallBack(__1, __result));
 				return;
 			}
