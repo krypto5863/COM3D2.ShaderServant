@@ -90,6 +90,7 @@
     <Compile Include="CubemapConverter.cs" />
     <Compile Include="MeshUpdater.cs" />
     <Compile Include="MPSCompatibility.cs" />
+    <Compile Include="ReflectionProbeController.cs" />
     <Compile Include="ShaderServant.cs" />
     <Compile Include="NPRShader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

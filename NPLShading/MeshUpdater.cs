@@ -70,7 +70,10 @@ namespace ShaderServant
 				//ShaderServant.PluginLogger.LogInfo($"{material.name} has called for reflection probes!");
 				_needsReflection = true;
 				ReflectionProbeController.Wake_Static();
-				_renderer.reflectionProbeUsage = ReflectionProbeUsage.BlendProbes;
+
+				//Nothing to blend. There should only be one probe at a time.
+				_renderer.reflectionProbeUsage = ReflectionProbeUsage.Simple;
+
 				//var prober = ReflectionProbeInstancer.GetOrAdd(_renderer.gameObject);
 				//prober.transform.position = _renderer.sharedMesh.bounds.center;
 				//var offset = prober.transform.position - prober.transform.TransformPoint(_renderer.sharedMesh.bounds.center);

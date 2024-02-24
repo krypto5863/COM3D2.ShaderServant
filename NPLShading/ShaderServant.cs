@@ -15,7 +15,6 @@ using System.Security.Permissions;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using static RootMotion.FinalIK.InteractionObject;
 using Material = UnityEngine.Material;
 using SecurityAction = System.Security.Permissions.SecurityAction;
 
@@ -39,6 +38,9 @@ namespace ShaderServant
 
 		//Config entry variable. You set your configs to this.
 		internal static ConfigEntry<bool> DeepSearchForSKMs;
+
+		internal static ConfigEntry<int> ReflectionResolution;
+		internal static ConfigEntry<float> ReflectionRange;
 
 		internal static Queue<MeshUpdater> Queue = new Queue<MeshUpdater>();
 
@@ -94,6 +96,18 @@ namespace ShaderServant
 
 			//Binds the configuration. In other words it sets your ConfigEntry var to your config setup.
 			DeepSearchForSKMs = Config.Bind("General", "Deep Search SkinnedMeshRenderers", false, "Not suggested, it can cause performance hikes when a third party plugin spawns an NPR item and it isn't directly supported by SS. However, it will make things work properly.");
+			ReflectionResolution = Config.Bind("Reflections", "Resolution", 256, new ConfigDescription("The resolution of reflections. More means better but also more intensive.", new AcceptableValueList<int>(16, 32, 64, 128, 256, 512, 1024, 2048)));
+			ReflectionRange = Config.Bind("Reflections", "Range", 512f, "How far reflections will be rendered. More means you see further in reflections but also more intensive.");
+
+			ReflectionResolution.SettingChanged += (s, e) =>
+			{
+				ReflectionProbeController._instance.Probe.resolution = ReflectionResolution.Value;
+			};
+
+			ReflectionRange.SettingChanged += (s, e) =>
+			{
+				ReflectionProbeController._instance.Probe.size = new Vector3(ReflectionRange.Value, ReflectionRange.Value, ReflectionRange.Value);
+			};
 
 			SceneManager.sceneLoaded += NprShader.OnSceneLoaded;
 
@@ -118,10 +132,11 @@ namespace ShaderServant
 				Debug.LogWarning("ComSH was not patched! Might not be loaded...");
 			}
 		}
+
 		private static void Assert(string message, string title)
 		{
 			NUty.WinMessageBox(NUty.GetWindowHandle(), message, title, 0x00000010 | 0x00000000);
-			UnityEngine.Application.Quit();
+			Application.Quit();
 		}
 
 		public static bool LoadExternalMaterial(string shaderFileName, ref Material targetMaterial)
@@ -139,6 +154,20 @@ namespace ShaderServant
 
 			//PluginLogger.LogInfo($"Located un-found shader: {targetMaterial.name} | {targetMaterial.shader}");
 
+			return false;
+		}
+
+		public static bool LoadExternalMaterial2(string shaderMaterialName, ref Material material)
+		{
+			var someMaterial = Materials
+				.FirstOrDefault(m => m.name.Equals(shaderMaterialName, StringComparison.OrdinalIgnoreCase));
+
+			if (someMaterial == null)
+			{
+				return true;
+			}
+
+			material = someMaterial;
 			return false;
 		}
 
@@ -218,7 +247,6 @@ namespace ShaderServant
 				reader.ReadString();
 
 				//PluginLogger.LogInfo($"Loading texture {text5}");
-
 				var tempText = ImportCM.CreateTexture(text5 + ".tex");
 				tempText.name = text5;
 
@@ -387,6 +415,33 @@ namespace ShaderServant
 					new CodeInstruction(OpCodes.Ldarg_0),
 					new CodeInstruction(OpCodes.Call,
 						typeof(ShaderServant).GetMethod("ForceNprCompatibility")));
+
+			return codeMatch.InstructionEnumeration();
+		}
+
+		[HarmonyPatch(typeof(ImportCM), "ReadMaterial")]
+		[HarmonyTranspiler]
+		private static IEnumerable<CodeInstruction> LoadShaderMaterial2(IEnumerable<CodeInstruction> instructions,
+			ILGenerator generator)
+		{
+			var codeMatch = new CodeMatcher(instructions);
+
+			codeMatch = codeMatch.MatchForward(true,
+				new CodeMatch(OpCodes.Ldloc_S),
+				new CodeMatch(OpCodes.Ldnull),
+				new CodeMatch(OpCodes.Call),
+				new CodeMatch(OpCodes.Brfalse)
+			);
+
+			var newLabel = codeMatch.Instruction.operand;
+			codeMatch = codeMatch.Advance(1);
+
+			codeMatch = codeMatch
+				.Insert(
+					new CodeInstruction(OpCodes.Ldloc_2),
+					new CodeInstruction(OpCodes.Ldloca_S, 4),
+					new CodeInstruction(OpCodes.Call, typeof(ShaderServant).GetMethod(nameof(LoadExternalMaterial2))),
+					new CodeInstruction(OpCodes.Brfalse_S, newLabel));
 
 			return codeMatch.InstructionEnumeration();
 		}
