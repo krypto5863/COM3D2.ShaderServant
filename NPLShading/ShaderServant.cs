@@ -15,6 +15,7 @@ using System.Security;
 using System.Security.Permissions;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 using Material = UnityEngine.Material;
 using SecurityAction = System.Security.Permissions.SecurityAction;
@@ -44,6 +45,7 @@ namespace ShaderServant
 
 		internal static ConfigEntry<int> ReflectionResolution;
 		internal static ConfigEntry<float> ReflectionRange;
+		internal static ConfigEntry<string> ReflectionTimeSlicingMode;
 
 		internal static Queue<MeshUpdater> Queue = new Queue<MeshUpdater>();
 
@@ -97,20 +99,44 @@ namespace ShaderServant
 				PluginLogger.LogInfo($"\"{mat.name}\" contains shader \"{mat.shader.name}\"");
 			}
 
+			var acceptableValues = new AcceptableValueList<string>(Enum.GetNames(typeof(ReflectionProbeTimeSlicingMode)));
+
 			//Binds the configuration. In other words it sets your ConfigEntry var to your config setup.
 			//DeepSearchForSKMs = Config.Bind("General", "Deep Search SkinnedMeshRenderers", false, "Not suggested, it can cause performance hikes when a third party plugin spawns an NPR item and it isn't directly supported by SS. However, it will make things work properly.");
-			ReflectionResolution = Config.Bind("Reflections", "Resolution", 256, new ConfigDescription("The resolution of reflections. More means better but also more intensive.", new AcceptableValueList<int>(16, 32, 64, 128, 256, 512, 1024, 2048)));
+			ReflectionTimeSlicingMode = Config.Bind("Reflections", "Time Slicing Mode", acceptableValues.AcceptableValues.FirstOrDefault(), new ConfigDescription("The refresh mode. This is how the reflections are rendered. NoTimeSlicing is worst performance, quickest reflection reaction. AllFacesAtOnce is the middle ground. IndividualFaces is the lightest but least responsive.", acceptableValues));
+			ReflectionResolution = Config.Bind("Reflections", "Resolution", 128, new ConfigDescription("The resolution of reflections. More means better but also more intensive.", new AcceptableValueList<int>(16, 32, 64, 128, 256, 512, 1024, 2048)));
 			ReflectionRange = Config.Bind("Reflections", "Range", 512f, "From how far away a reflecting object will reflect. This is the relationship between your camera and object's distance.");
 
 			ReflectionResolution.SettingChanged += (s, e) =>
 			{
+				if (ReflectionProbeController._instance == null)
+				{
+					return;
+				}
+
 				ReflectionProbeController._instance.Probe.resolution = ReflectionResolution.Value;
 			};
 
 			ReflectionRange.SettingChanged += (s, e) =>
 			{
+				if (ReflectionProbeController._instance == null)
+				{
+					return;
+				}
+
 				ReflectionProbeController._instance.Probe.size = new Vector3(ReflectionRange.Value, ReflectionRange.Value, ReflectionRange.Value);
 			};
+
+			ReflectionTimeSlicingMode.SettingChanged += (s, e) =>
+			{
+				if (ReflectionProbeController._instance == null)
+				{
+					return;
+				}
+
+				ReflectionProbeController._instance.Probe.timeSlicingMode = (ReflectionProbeTimeSlicingMode)Enum.Parse(typeof(ReflectionProbeTimeSlicingMode), ReflectionTimeSlicingMode.Value); ;
+			};
+			
 
 			SceneManager.sceneLoaded += NprShader.OnSceneLoaded;
 
@@ -136,6 +162,10 @@ namespace ShaderServant
 				Debug.LogWarning("ComSH was not patched! Might not be loaded...");
 			}
 			*/
+
+#if DEBUG
+			PluginLogger.LogMessage("Boots are strapped!");
+#endif
 		}
 
 		private static void Assert(string message, string title)
@@ -521,6 +551,42 @@ namespace ShaderServant
 					new CodeInstruction(OpCodes.Br, brMatch));
 
 			return codeMatch.InstructionEnumeration();
+		}
+
+		[HarmonyPatch(typeof(ImportCM), "ReadMaterial")]
+		[HarmonyTranspiler]
+		private static IEnumerable<CodeInstruction> SetAllTexturesToRepeat(IEnumerable<CodeInstruction> instructions)
+		{
+
+			try
+			{
+				var result = new CodeMatcher(instructions)
+					.MatchForward(false,
+						new CodeMatch(OpCodes.Ldloc_S),
+						new CodeMatch(OpCodes.Ldc_I4_1),
+						new CodeMatch(OpCodes.Callvirt,
+							typeof(Texture).GetProperty(nameof(Texture.wrapMode))?.GetSetMethod())
+					)
+					.ThrowIfNotMatch("Could not match! Maybe WrapModeExtend was here?")
+					.Advance(1)
+					.SetOpcodeAndAdvance(OpCodes.Ldc_I4_0)
+					.InstructionEnumeration();
+
+				return result;
+			}
+			catch (InvalidOperationException)
+			{
+				var myType = AppDomain.CurrentDomain.GetAssemblies()
+					.Select(r => r.GetTypes().FirstOrDefault(m => m.Name.Equals("WrapModeExtend")));
+
+				if (myType != null)
+				{
+					PluginLogger.LogInfo("Skipping WrapMode patch as it seems WrapModeExtend has taken care of it...");
+					return instructions;
+				}
+
+				throw;
+			}
 		}
 
 		[HarmonyPatch(typeof(ImportCM), "ReadMaterial")]

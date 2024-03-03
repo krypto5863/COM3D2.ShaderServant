@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Rendering;
 
 namespace ShaderServant
@@ -7,7 +8,7 @@ namespace ShaderServant
 	{
 		public ReflectionProbe Probe { get; private set; }
 		public static ReflectionProbeController _instance { get; private set; }
-		private static bool _renderNextUpdate;
+		//private static bool _renderNextUpdate;
 		private int _renderId = -1;
 
 		public static ReflectionProbeController GetOrInitialize()
@@ -30,6 +31,10 @@ namespace ShaderServant
 
 		private void Awake()
 		{
+#if DEBUG
+			ShaderServant.PluginLogger.LogInfo("Probe is building...");
+#endif
+
 			Probe = gameObject.AddComponent<ReflectionProbe>();
 			Probe.mode = ReflectionProbeMode.Realtime;
 			//Probe.resolution = 512;
@@ -38,28 +43,35 @@ namespace ShaderServant
 			Probe.size = new Vector3(ShaderServant.ReflectionRange.Value, ShaderServant.ReflectionRange.Value, ShaderServant.ReflectionRange.Value);
 			Probe.backgroundColor = new Color32(0, 0, 0, 0);
 			Probe.clearFlags = ReflectionProbeClearFlags.SolidColor;
-			Probe.refreshMode = ReflectionProbeRefreshMode.ViaScripting;
-			Probe.timeSlicingMode = ReflectionProbeTimeSlicingMode.NoTimeSlicing;
+			Probe.refreshMode = ReflectionProbeRefreshMode.EveryFrame;
+			Probe.timeSlicingMode = (ReflectionProbeTimeSlicingMode)Enum.Parse(typeof(ReflectionProbeTimeSlicingMode), ShaderServant.ReflectionTimeSlicingMode.Value);
 			Probe.boxProjection = true;
 			Probe.hdr = true;
 			Probe.cullingMask = -1;
 			Probe.transform.position = new Vector3(0f, 0f, 0f);
 
 			Sleep();
+#if DEBUG
+			ShaderServant.PluginLogger.LogInfo("Probe away!");
+#endif
 		}
 
 		public void Update()
 		{
+			/*
 			if (_renderNextUpdate == false)
 			{
 				return;
 			}
 
 			_renderNextUpdate = false;
+			*/
 
 			if (_renderId != -1 && Probe.IsFinishedRendering(_renderId) == false)
 			{
-				//ShaderServant.PluginLogger.LogInfo("Probe is rendering. Please hold...");
+#if DEBUG
+				ShaderServant.PluginLogger.LogInfo("Probe is rendering. Please hold...");
+#endif
 				return;
 			}
 
@@ -81,7 +93,9 @@ namespace ShaderServant
 				Probe.center = GameMain.Instance.MainCamera.GetPos();
 			}
 
-			//ShaderServant.PluginLogger.LogInfo("Probe completed a render!");
+#if DEBUG
+			ShaderServant.PluginLogger.LogInfo("Probe completed a render!");
+#endif
 
 			_renderId = Probe.RenderProbe();
 		}
@@ -113,9 +127,11 @@ namespace ShaderServant
 			instance.Sleep();
 		}
 
+		/*
 		public static void DoRenderNextUpdate()
 		{
 			_renderNextUpdate = true;
 		}
+		*/
 	}
 }
