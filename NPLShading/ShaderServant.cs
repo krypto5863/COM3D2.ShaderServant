@@ -96,7 +96,7 @@ namespace ShaderServant
 			foreach (var mat in Materials)
 			{
 				DontDestroyOnLoad(mat);
-				PluginLogger.LogInfo($"\"{mat.name}\" contains shader \"{mat.shader.name}\"");
+				PluginLogger.LogInfo($"\"{mat.shader.name}\" is declared by \"{mat.name}\"");
 			}
 
 			var acceptableValues = new AcceptableValueList<string>(Enum.GetNames(typeof(ReflectionProbeTimeSlicingMode)));
