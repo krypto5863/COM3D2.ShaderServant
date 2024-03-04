@@ -39,8 +39,10 @@ NPR used the shader fields within the mate files as a fallback and relied on the
 ![image](https://github.com/krypto5863/COM3D2.ShaderServant/assets/29824718/d78654f7-6363-4a64-b354-199d1e7e8df7)
 
 ### Where can I find shader name and material names?
-On startup, NPR will log all shader names and their materials to the output log and to the console. You can check inside of `bepinex/LogOutput.log` for something as follows:
+On startup, SS will log all shader names and their materials to a text file in `ShaderServantPacks\ShaderReport.txt`:
+![notepad_lkUY3gKQud](https://github.com/krypto5863/COM3D2.ShaderServant/assets/29824718/742d116a-3b8f-4b6d-b566-ff72b4237fd6)
 
+Alternatively, you can check inside of `bepinex/LogOutput.log` or the console itself for something as follows:
 ![notepad_0Kff90JlfN](https://github.com/krypto5863/COM3D2.ShaderServant/assets/29824718/788d8796-f432-4ecd-8a36-f86df63292fd)
 ### Material Template?
 When modders add shaders into a shader package, they should include a "default" material that uses said shader. This material contains the values that will be used initially when the material is created. Afterwards, any changes defined in the mate files are set.
