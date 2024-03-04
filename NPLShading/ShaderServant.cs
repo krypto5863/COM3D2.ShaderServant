@@ -13,6 +13,7 @@ using System.Linq;
 using System.Reflection.Emit;
 using System.Security;
 using System.Security.Permissions;
+using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -52,6 +53,7 @@ namespace ShaderServant
 		internal static Material[] Materials;
 
 		public static readonly string ShaderDirectory = Paths.GameRootPath + "\\ShaderServantPacks";
+		public const string ShaderReportFile = "ShaderReport.txt";
 
 		private void Awake()
 		{
@@ -73,12 +75,23 @@ namespace ShaderServant
 				//NUty.WinMessageBox(NUty.GetWindowHandle(), message, "Missing Reference!", 0x00000010 | 0x00000000);
 			}
 
+			if (Directory.Exists(ShaderDirectory) == false)
+			{
+				PluginLogger.LogError("ShaderServant has nothing to load! ShaderServant will disable itself now...");
+				return;
+			}
+
 			var shaderPackages = Directory.GetFiles(ShaderDirectory);
 
 			IEnumerable<Material> materialList = new List<Material>();
 
 			foreach (var shaderFile in shaderPackages)
 			{
+				if (Path.GetFileName(shaderFile).Equals(ShaderReportFile))
+				{
+					continue;
+				}
+
 				try
 				{
 					var shaderBundle = AssetBundle.LoadFromFile(shaderFile);
@@ -92,12 +105,16 @@ namespace ShaderServant
 			}
 
 			Materials = materialList.ToArray();
+			var shaderReport = new StringBuilder();
 
 			foreach (var mat in Materials)
 			{
 				DontDestroyOnLoad(mat);
 				PluginLogger.LogInfo($"\"{mat.shader.name}\" is declared by \"{mat.name}\"");
+				shaderReport.AppendLine($"\nShader: {mat.shader.name}\nMaterial: {mat.name}\n");
 			}
+
+			File.WriteAllText(ShaderDirectory + "\\" + ShaderReportFile, shaderReport.ToString());
 
 			var acceptableValues = new AcceptableValueList<string>(Enum.GetNames(typeof(ReflectionProbeTimeSlicingMode)));
 
