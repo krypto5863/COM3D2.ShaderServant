@@ -151,7 +151,7 @@ namespace ShaderServant
 				var xv2 = vDirA[2];
 				for (var x = 0; x < texSize; x++)
 				{
-					var v = ((xv2 - xv1) * fy) + xv1;
+					var v = (xv2 - xv1) * fy + xv1;
 					v.Normalize();
 					cols[x] = CalcProjectionSpherical(m_srcTexture, v);
 					xv1 += rotDX1;
