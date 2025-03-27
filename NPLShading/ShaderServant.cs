@@ -419,6 +419,15 @@ namespace ShaderServant
 			return true;
 		}
 
+		private static TextureWrapMode ShouldWrap(string materialName)
+		{
+#if DEBUG
+			PluginLogger.LogDebug($"Checking WrapMode target for {materialName}");
+#endif
+
+			return materialName.StartsWith("gp03_", StringComparison.OrdinalIgnoreCase) ? TextureWrapMode.Clamp : TextureWrapMode.Repeat;
+		}
+
 		private static IEnumerator SkmDeepSearch(Material material)
 		{
 			yield return null;
@@ -623,7 +632,8 @@ namespace ShaderServant
 						)
 						.ThrowIfNotMatch("Could not match! Maybe WrapModeExtend was here?")
 						.Advance(1)
-						.SetOpcodeAndAdvance(OpCodes.Ldc_I4_0)
+						.RemoveInstruction()
+						.Insert(new CodeInstruction(OpCodes.Ldloc_0), CodeInstruction.Call(typeof(ShaderServant), nameof(ShouldWrap)))
 						.InstructionEnumeration();
 
 					return result;
