@@ -16,19 +16,19 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="CM3D2.Serialization">
-      <HintPath>F:\COM3D2Test 2.5\COM3D2_5\BepinEx\plugins\CM3D2.Serialization.dll</HintPath>
+      <HintPath>..\..\COM3D2.Serialization\CM3D2.Serialization\bin\Debug\net35\CM3D2.Serialization.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>F:\COM3D2Test 2.5\COM3D2_5\COM3D2x64_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>Z:\COM3D2Test 2.5\COM3D2_5\COM3D2x64_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AssetBundleModule">
-      <HintPath>F:\COM3D2Test 2.5\COM3D2_5\COM3D2x64_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
+      <HintPath>Z:\COM3D2Test 2.5\COM3D2_5\COM3D2x64_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>F:\COM3D2Test 2.5\COM3D2_5\COM3D2x64_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>Z:\COM3D2Test 2.5\COM3D2_5\COM3D2x64_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.ImageConversionModule">
-      <HintPath>F:\COM3D2Test 2.5\COM3D2_5\COM3D2x64_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
+      <HintPath>Z:\COM3D2Test 2.5\COM3D2_5\COM3D2x64_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   <PropertyGroup>

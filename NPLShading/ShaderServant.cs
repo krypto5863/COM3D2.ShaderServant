@@ -1,10 +1,4 @@
-﻿using BepInEx;
-using BepInEx.Configuration;
-using BepInEx.Logging;
-using CM3D2.Serialization;
-using CM3D2.Serialization.Files;
-using HarmonyLib;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,6 +9,12 @@ using System.Security;
 using System.Security.Permissions;
 using System.Text;
 using System.Text.RegularExpressions;
+using BepInEx;
+using BepInEx.Configuration;
+using BepInEx.Logging;
+using CM3D2.Serialization;
+using CM3D2.Serialization.Files;
+using HarmonyLib;
 using Mono.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -603,8 +603,8 @@ namespace ShaderServant
 				//Add branch
 				codeMatch = codeMatch
 					.Insert(
-						new CodeInstruction(OpCodes.Ldloc_S, 10),
-						new CodeInstruction(OpCodes.Ldloc_S, 11),
+						new CodeInstruction(OpCodes.Ldloc_S, 12),
+						new CodeInstruction(OpCodes.Ldloc_S, 13),
 						new CodeInstruction(OpCodes.Ldarga_S, 0),
 						new CodeInstruction(OpCodes.Ldloca_S, 3),
 						new CodeInstruction(OpCodes.Call,
